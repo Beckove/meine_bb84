@@ -1,6 +1,6 @@
-# Hướng dẫn cài đặt và chạy dự án
+# Project Setup and Run Guide
 
-## 📆 Cài đặt dependencies cho Frontend
+## Install Frontend Dependencies
 
 ```bash
 npm install framer-motion
@@ -9,12 +9,12 @@ npm install react-icons
 npm install lucide-react
 ```
 
-> Nếu bạn sử dụng Tailwind CSS, hãy cài đặt theo hướng dẫn chính thức tại:
+> If you're using Tailwind CSS, follow the official installation guide:
 > [https://tailwindcss.com/docs/installation/using-vite](https://tailwindcss.com/docs/installation/using-vite)
 
 ---
 
-## 🚀 Chạy dự án
+## Running the Project
 
 ### Backend
 
@@ -22,31 +22,25 @@ npm install lucide-react
 python server.py
 ```
 
-> Yêu cầu Python đã được cài đặt và có đủ các thư viện cần thiết như Flask.
+> Requires Python with necessary libraries such as Flask installed.
 
 ### Frontend
 
 ```bash
+npm install
 npm run dev
 ```
 
-> Nếu bạn dùng Vite, frontend sẽ chạy ở địa chỉ `http://localhost:5173`.
+> If you're using Vite, the frontend will run at `http://localhost:5173`.
 
 ---
 
-## ✅ Tóm tắt các package cần thiết
+## Summary of Required Packages
 
-| Gói                | Mục đích                                 |
+| Package            | Purpose                                  |
 | ------------------ | ---------------------------------------- |
-| `framer-motion`    | Hiệu ứng chuyển động animation           |
-| `react-router-dom` | Điều hướng trang trong React             |
-| `react-icons`      | Icon từ các thư viện phổ biến            |
-| `lucide-react`     | Bộ icon hiện đại, tối ưu cho React       |
-| `tailwindcss`      | Styling bằng utility-first CSS framework |
-
----
-
-## 🛠️ Lưu ý
-
-* Kiểm tra kỹ các component có tồn tại như: `sidebar1`, `controlpanel`, `appbar`, `parameters`.
-* Đảm bảo ảnh như `Alice.svg`, `Bob.svg` đã có trong thư mục `./assets`.
+| `framer-motion`    | Animation and motion effects             |
+| `react-router-dom` | Client-side routing in React             |
+| `react-icons`      | Popular icon libraries for React         |
+| `lucide-react`     | Modern, optimized icon library for React |
+| `tailwindcss`      | Utility-first CSS framework for styling  |
