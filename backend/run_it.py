@@ -3,7 +3,6 @@ import numpy as np
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import Aer
 
-# Thiết lập các tham số mặc định
 
 def setup_parameters(params):
     return {
@@ -78,7 +77,6 @@ def calculate_qber(alice_bits, bob_bits, alice_bases, bob_bases):
 
 
 def bb84_no_Eve(n_bits=1000, params=None):
-    # Dùng params mặc định nếu không có
     if params is None:
         params = setup_parameters({})
 
@@ -159,7 +157,6 @@ def bb84_Eve(n_bits=1000, params=None):
 
 
 if __name__ == '__main__':
-    # Đọc n_bits từ tham số dòng lệnh
     n_bits = int(sys.argv[1]) if len(sys.argv) > 1 else 40
     results = bb84_no_Eve(n_bits=n_bits)
     alice_bits, bob_bits, alice_bases, bob_bases, sifted_key, qber, matching_bases_count = results
