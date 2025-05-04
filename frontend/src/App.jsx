@@ -6,19 +6,18 @@ import ControlPanel from './components/controlpanel';
 import ParameterPanel from './components/parameters';
 import { useNavigate } from 'react-router-dom';
 
-// Import assets relative to this file
 import Alice from './assets/Alice.svg';
 import Bob from './assets/Bob.svg';
 import './App.css';
 
 const idealParams = {
-  sourceRate: 10,               // tốc độ nguồn không ảnh hưởng đến lỗi, giữ nguyên
-  detectorEfficiency: 1.0,      // hiệu suất detector tối đa (100%)
-  sourceEfficiency: 1.0,        // hiệu suất nguồn tối đa (100%)
-  perturbProbability: 0.0,      // không có nhiễu (xoay trạng thái)
-  fiberLength: 0,               // không truyền qua cáp quang → không mất mát
-  sopMeanDeviation: 0.0,        // không có độ lệch SOP
-  fiberLoss: 0.0                // không có suy hao tín hiệu trong sợi quang
+  sourceRate: 10,
+  detectorEfficiency: 1.0,
+  sourceEfficiency: 1.0,
+  perturbProbability: 0.0,
+  fiberLength: 0,
+  sopMeanDeviation: 0.0,
+  fiberLoss: 0.0 
 };
 
 

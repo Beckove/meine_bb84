@@ -1,4 +1,3 @@
-# Hàm để thiết lập các tham số
 import numpy as np
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import Aer

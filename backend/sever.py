@@ -8,20 +8,17 @@ CORS(app)
 @app.route('/bb84', methods=['POST'])
 def run_bb84():
     try:
-        # Lấy toàn bộ JSON từ request
         payload = request.json
         print("Received payload from frontend:", payload)
 
-        # Tách bitCount ra và xóa các trường không liên quan
         n_bits = payload.get('bitCount', 100)
         setup_params = {k: v for k, v in payload.items() if k not in ('bitCount','isAutoPlay','isManualInput')}
         print("Parameters for setup:", setup_params)
 
-        # Chạy mô phỏng
+        # Simulate
         alice_bits, bob_bits, alice_bases, bob_bases, sifted_key, qber, matching_bases_count = \
             bb84.bb84_no_Eve(n_bits=n_bits, params=bb84.setup_parameters(setup_params))
 
-        # Chuẩn bị object trả về
         response_data = {
             "alice_bits": alice_bits,
             "bob_bits": bob_bits,
@@ -32,8 +29,7 @@ def run_bb84():
             "matching_bases_count": matching_bases_count
         }
 
-        # In ra terminal chính xác cái data sẽ gửi
-        print("📤 Sending response:", response_data)
+        print("Sending response:", response_data)
 
         # Trả về JSON
         return jsonify(response_data)
