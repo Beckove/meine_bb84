@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW 2017 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="2.333in" height="2.26in" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 2333 2260"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:#042433;stroke-width:20.83;stroke-miterlimit:2.61313}
+    .fil5 {fill:none}
+    .fil0 {fill:#F5874F}
+    .fil3 {fill:#F58634}
+    .fil1 {fill:#9DD3AF}
+    .fil4 {fill:#33CCCC}
+    .fil2 {fill:white}
+   ]]>
+  </style>
+   <clipPath id="id0">
+    <rect x="6303.35" y="367.23" width="2269.51" height="2586.05"/>
+   </clipPath>
+   <clipPath id="id1">
+    <rect x="1456.45" y="-3955.71" width="1010.85" height="1010.85"/>
+   </clipPath>
+ </defs>
+ <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <rect class="fil0 str0" x="5750" y="-3846.28" width="2333.33" height="2260.42"/>
+  <rect class="fil1 str0" x="5895.83" y="-3710.86" width="2041.67" height="2000"/>
+  <polygon class="fil2 str0" points="6166.67,-3460.86 6841.66,-3460.86 6672.92,-3292.1 6916.67,-3048.35 7160.41,-3292.1 6991.67,-3460.86 7666.67,-3460.86 7666.67,-2785.86 7497.91,-2954.6 7254.15,-2710.86 7497.91,-2467.11 7666.67,-2635.85 7666.67,-1960.86 6991.67,-1960.86 7160.41,-2129.61 6916.67,-2373.36 6672.92,-2129.61 6841.66,-1960.86 6166.67,-1960.86 6166.67,-2635.85 6335.42,-2467.11 6579.18,-2710.86 6335.42,-2954.6 6166.67,-2785.86 "/>
+  <g id="_3062414511696">
+   <rect class="fil3 str0" x="-0" y="0" width="2333" height="2260"/>
+   <rect class="fil4 str0" x="145.16" y="134.77" width="2042.67" height="1990.46"/>
+   <polygon class="fil2 str0" points="266.5,1130 671.5,725 671.5,927.5 964,927.5 964,635 761.5,635 1166.5,230 1571.5,635 1368.99,635 1368.99,927.5 1661.5,927.5 1661.5,725 2066.5,1130 1661.5,1535 1661.5,1332.5 1368.99,1332.5 1368.99,1625 1571.5,1625 1166.5,2030 761.5,1625 964,1625 964,1332.5 671.5,1332.5 671.5,1535 "/>
+  </g>
+  <g style="clip-path:url(#id0)">
+   <image x="6317.24" y="381.12" width="2241.73" height="2558.27" xlink:href="19992-rectilinear_base-ade7de48-4370-430e-b76d-63ebfc190a37_Images\19992-rectilinear_base-ade7de48-4370-430e-b76d-63ebfc190a37_ImgID1.png"/>
+  </g>
+  <rect class="fil5" x="6317.24" y="381.12" width="2241.73" height="2558.27"/>
+  <g style="clip-path:url(#id1)">
+   <image x="1470.34" y="-3941.82" width="983.07" height="983.07" xlink:href="19992-rectilinear_base-ade7de48-4370-430e-b76d-63ebfc190a37_Images\19992-rectilinear_base-ade7de48-4370-430e-b76d-63ebfc190a37_ImgID2.png"/>
+  </g>
+  <rect class="fil5" x="1470.34" y="-3941.82" width="983.07" height="983.07"/>
+ </g>
+</svg>

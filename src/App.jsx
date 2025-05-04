@@ -1,0 +1,98 @@
+// App.jsx
+import React, { useState } from 'react';
+import Sidebar from './components/sidebar1';
+import AppBar from './components/appbar';
+import ControlPanel from './components/controlpanel';
+import ParameterPanel from './components/parameters';
+import { useNavigate } from 'react-router-dom';
+
+// Import assets relative to this file
+import Alice from './assets/Alice.svg';
+import Bob from './assets/Bob.svg';
+import './App.css';
+
+const idealParams = {
+  sourceRate: 10,               // tốc độ nguồn không ảnh hưởng đến lỗi, giữ nguyên
+  detectorEfficiency: 1.0,      // hiệu suất detector tối đa (100%)
+  sourceEfficiency: 1.0,        // hiệu suất nguồn tối đa (100%)
+  perturbProbability: 0.0,      // không có nhiễu (xoay trạng thái)
+  fiberLength: 0,               // không truyền qua cáp quang → không mất mát
+  sopMeanDeviation: 0.0,        // không có độ lệch SOP
+  fiberLoss: 0.0                // không có suy hao tín hiệu trong sợi quang
+};
+
+
+function App() {
+  const navigate = useNavigate();
+  const [params, setParams] = useState(idealParams);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleParamChange = newParams => setParams(newParams);
+  const handleParamReset = () => setParams(initialParams);
+
+  const handleStart = async ({ bitCount, isAutoPlay, isManualInput }) => {
+    const inputParams = { bitCount, isAutoPlay, isManualInput, ...params };
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const resp = await fetch('http://localhost:5000/bb84', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(inputParams)
+      });
+
+      if (!resp.ok) throw new Error(`Server error ${resp.status}`);
+      const result = await resp.json();
+      
+      navigate('/no-eve', { state: { result, inputParams } });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex h-screen">
+      <div className="fixed left-0 top-0 bottom-0 w-20 bg-white">
+        <Sidebar />
+      </div>
+      <div className="flex flex-col flex-1 ml-20">
+        <AppBar />
+
+        {error && (
+          <div className="flex-1 flex items-center justify-center text-red-500">
+            Lỗi: {error}
+          </div>
+        )}
+
+        {!isLoading && (
+          <div className="flex-1 flex justify-center items-center p-8">
+            <div className="flex flex-col items-center space-y-10 w-full max-w-5xl">
+              <div className="flex items-center space-x-8">
+                <img src={Alice} alt="Alice" className="w-32 h-32" />
+                <ControlPanel onStart={handleStart} />
+                <img src={Bob} alt="Bob" className="w-32 h-32" />
+              </div>
+              <ParameterPanel
+                params={params}
+                onChange={handleParamChange}
+                onReset={handleParamReset}
+              />
+            </div>
+          </div>
+        )}
+
+        {isLoading && (
+          <div className="text-amber-500 flex-1 flex items-center justify-center">
+            Loading Simulation ...
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default App;

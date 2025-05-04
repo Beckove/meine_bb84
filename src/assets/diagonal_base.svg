@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW 2017 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="2.333in" height="2.26in" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 2333 2260"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:#042433;stroke-width:20.83;stroke-miterlimit:2.61313}
+    .fil5 {fill:none}
+    .fil0 {fill:#F5874F}
+    .fil3 {fill:#F58634}
+    .fil1 {fill:#9DD3AF}
+    .fil4 {fill:#33CCCC}
+    .fil2 {fill:white}
+   ]]>
+  </style>
+   <clipPath id="id0">
+    <rect x="6303.35" y="367.23" width="2269.51" height="2586.05"/>
+   </clipPath>
+   <clipPath id="id1">
+    <rect x="1456.45" y="-3955.71" width="1010.85" height="1010.85"/>
+   </clipPath>
+ </defs>
+ <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <rect class="fil0 str0" x="-0.17" y="-0.21" width="2333.33" height="2260.42"/>
+  <rect class="fil1 str0" x="145.67" y="135.21" width="2041.67" height="2000"/>
+  <polygon class="fil2 str0" points="416.5,385.21 1091.5,385.21 922.76,553.96 1166.5,797.72 1410.24,553.96 1241.5,385.21 1916.5,385.21 1916.5,1060.21 1747.75,891.47 1503.99,1135.21 1747.75,1378.95 1916.5,1210.21 1916.5,1885.21 1241.5,1885.21 1410.24,1716.46 1166.5,1472.7 922.76,1716.46 1091.5,1885.21 416.5,1885.21 416.5,1210.21 585.25,1378.95 829.01,1135.21 585.25,891.47 416.5,1060.21 "/>
+  <g id="_3062414511696">
+   <rect class="fil3 str0" x="-4839.94" y="-2918.71" width="2333" height="2260"/>
+   <rect class="fil4 str0" x="-4694.78" y="-2783.94" width="2042.67" height="1990.46"/>
+   <polygon class="fil2 str0" points="-4573.44,-1788.7 -4168.44,-2193.7 -4168.44,-1991.21 -3875.94,-1991.21 -3875.94,-2283.7 -4078.44,-2283.7 -3673.44,-2688.71 -3268.44,-2283.7 -3470.95,-2283.7 -3470.95,-1991.21 -3178.44,-1991.21 -3178.44,-2193.7 -2773.44,-1788.7 -3178.44,-1383.7 -3178.44,-1586.21 -3470.95,-1586.21 -3470.95,-1293.7 -3268.44,-1293.7 -3673.44,-888.7 -4078.44,-1293.7 -3875.94,-1293.7 -3875.94,-1586.21 -4168.44,-1586.21 -4168.44,-1383.7 "/>
+  </g>
+  <g style="clip-path:url(#id0)">
+   <image x="6317.24" y="381.12" width="2241.73" height="2558.27" xlink:href="19992-diagonal_base-0f084bcc-e43c-4a65-87cc-2c1d3018bfb6_Images\19992-diagonal_base-0f084bcc-e43c-4a65-87cc-2c1d3018bfb6_ImgID1.png"/>
+  </g>
+  <rect class="fil5" x="6317.24" y="381.12" width="2241.73" height="2558.27"/>
+  <g style="clip-path:url(#id1)">
+   <image x="1470.34" y="-3941.82" width="983.07" height="983.07" xlink:href="19992-diagonal_base-0f084bcc-e43c-4a65-87cc-2c1d3018bfb6_Images\19992-diagonal_base-0f084bcc-e43c-4a65-87cc-2c1d3018bfb6_ImgID2.png"/>
+  </g>
+  <rect class="fil5" x="1470.34" y="-3941.82" width="983.07" height="983.07"/>
+ </g>
+</svg>
