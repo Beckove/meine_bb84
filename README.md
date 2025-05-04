@@ -14,11 +14,12 @@ npm install lucide-react
 
 ---
 
-## Running the Project
+## Running the Project (cd to each part)
 
 ### Backend
 
 ```bash
+cd backend
 python server.py
 ```
 
@@ -27,6 +28,7 @@ python server.py
 ### Frontend
 
 ```bash
+cd frontend
 npm install
 npm run dev
 ```
