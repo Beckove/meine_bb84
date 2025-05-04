@@ -9,7 +9,7 @@ npm install react-icons
 npm install lucide-react
 ```
 
-> If you're using Tailwind CSS, follow the official installation guide:
+> To install Tailwind , follow the official installation guide:
 > [https://tailwindcss.com/docs/installation/using-vite](https://tailwindcss.com/docs/installation/using-vite)
 
 ---
