@@ -4,32 +4,32 @@ import { useNavigate } from 'react-router-dom';
 export default function HomePage() {
   const navigate = useNavigate();
 
-  const handleNoEve = () => {
-    // Chuyển tới trang chính (No Eve mode)
-    navigate('/no-eve');
-  };
-
-  const handleEve = () => {
-    // Chuyển tới trang có Eve (Eve mode)
-    navigate('/eve');
-  };
-
   return (
-    <div className="flex w-full h-screen items-center justify-center bg-gray-100">
-      <div className="space-x-6 w-full bg-amber-800">
-        <button
+    <div className="flex items-center justify-center w-full h-screen bg-gradient-to-br from-purple-900 via-indigo-800 to-blue-700">
+      <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-3xl p-12 shadow-2xl flex flex-col items-center space-y-8">
+        <h1 className="text-4xl font-extrabold text-white tracking-wider">BB84 QKD Simulation</h1>
+        <div className="flex flex-col sm:flex-row gap-6">
+          <button
             onClick={() => navigate('/setting_page')}
-            className="px-6 py-3 bg-green-500 text-black rounded-lg hover:bg-green-600"
+            className="px-8 py-4 bg-green-500 bg-opacity-80 hover:bg-opacity-100 text-white font-semibold rounded-full shadow-lg transform hover:scale-105 transition-transform"
           >
-            No Eve mode
-        </button>
+            No Eve Mode
+          </button>
 
-        <button
-          onClick={handleEve}
-          className="px-6 py-3 bg-red-600 text-black rounded-lg hover:bg-red-500"
-        >
-          Eve mode
-        </button>
+          <button
+            onClick={() => navigate('/eve')}
+            className="px-8 py-4 bg-red-500 bg-opacity-80 hover:bg-opacity-100 text-white font-semibold rounded-full shadow-lg transform hover:scale-105 transition-transform"
+          >
+            Eve Mode
+          </button>
+
+          <button
+            onClick={() => navigate('/simulation')}
+            className="px-8 py-4 bg-indigo-500 bg-opacity-80 hover:bg-opacity-100 text-white font-semibold rounded-full shadow-lg transform hover:scale-105 transition-transform"
+          >
+            Simulation Mode
+          </button>
+        </div>
       </div>
     </div>
   );
