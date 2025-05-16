@@ -20,7 +20,6 @@ const idealParams = {
   fiberLoss: 0.0 
 };
 
-
 function App() {
   const navigate = useNavigate();
   const [params, setParams] = useState(idealParams);
@@ -28,10 +27,10 @@ function App() {
   const [error, setError] = useState(null);
 
   const handleParamChange = newParams => setParams(newParams);
-  const handleParamReset = () => setParams(initialParams);
+  const handleParamReset = () => setParams(idealParams);
 
-  const handleStart = async ({ bitCount, isAutoPlay, isManualInput }) => {
-    const inputParams = { bitCount, isAutoPlay, isManualInput, ...params };
+  const handleStart = async ({ bitCount, isEveMode }) => {
+    const inputParams = { bitCount, isEveMode, ...params };
     setIsLoading(true);
     setError(null);
 
@@ -44,8 +43,21 @@ function App() {
 
       if (!resp.ok) throw new Error(`Server error ${resp.status}`);
       const result = await resp.json();
-      
-      navigate('/no-eve', { state: { result, inputParams } });
+
+      // Destructure all returned fields
+      const {
+        alice_bits,
+        bob_bits,
+        alice_bases,
+        bob_bases,
+        eve_bits,
+        eve_bases,
+        sifted_key,
+        quantum_bit_error_rate,
+        matching_bases_count
+      } = result;
+
+navigate(isEveMode ? '/with-eve' : '/no-eve', { state: { result, inputParams } });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -71,9 +83,9 @@ function App() {
           <div className="flex-1 flex justify-center items-center p-8">
             <div className="flex flex-col items-center space-y-10 w-full max-w-5xl">
               <div className="flex items-center space-x-8">
-                <img src={Alice} alt="Alice" className="w-32 h-32" />
+                <img src={Alice} alt="Alice" className="w-32 h-32 animate-pulse" />
                 <ControlPanel onStart={handleStart} />
-                <img src={Bob} alt="Bob" className="w-32 h-32" />
+                <img src={Bob} alt="Bob" className="w-32 h-32 animate-pulse" />
               </div>
               <ParameterPanel
                 params={params}

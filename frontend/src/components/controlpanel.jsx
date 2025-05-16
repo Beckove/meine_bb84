@@ -5,16 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import '../index.css';
 
 export default function ControlPanel({ onStart }) {
-  const [bitCount, setBitCount]         = useState(10);
-  const [isAutoPlay, setIsAutoPlay]     = useState(true);
-  const [isManualInput, setIsManualInput] = useState(false);
+  const [bitCount, setBitCount] = useState(10);
+  const [isEveMode, setIsEveMode] = useState(false);
+  const [isNoEveMode, setIsNoEveMode] = useState(true);
   const [popupMessage, setPopupMessage] = useState('');
   const [isPopupVisible, setIsPopupVisible] = useState(false);
 
   const navigate = useNavigate();
 
   const handleStart = () => {
-    if (!isAutoPlay && !isManualInput) {
+    if (!isEveMode && !isNoEveMode) {
       setPopupMessage('Must choose simulate mode');
       setIsPopupVisible(true);
       return;
@@ -24,9 +24,8 @@ export default function ControlPanel({ onStart }) {
     setIsPopupVisible(true);
 
     setTimeout(() => {
-      onStart({ bitCount, isAutoPlay, isManualInput });
+      onStart({ bitCount, isEveMode, isNoEveMode });
       setIsPopupVisible(false);
-      //navigate('/no-eve');
     }, 3500);
   };
 
@@ -47,18 +46,26 @@ export default function ControlPanel({ onStart }) {
         className="mx-auto w-20 h-10 border rounded text-center"
       />
 
-      <div className="flex space-x-4 justify-center">
+      <div className="flex space-x-6 justify-center">
         <label className="flex items-center cursor-pointer">
           <div
-            onClick={() => { setIsAutoPlay(true); setIsManualInput(false); }}
+            onClick={() => { setIsEveMode(true); setIsNoEveMode(false); }}
             className="w-5 h-5 border rounded flex items-center justify-center"
           >
-            {isAutoPlay ? <CheckSquare /> : <Square />}
+            {isEveMode ? <CheckSquare /> : <Square />}
           </div>
-          <span className="ml-2">Auto</span>
+          <span className="ml-2">Eve Mode</span>
         </label>
 
-       
+        <label className="flex items-center cursor-pointer">
+          <div
+            onClick={() => { setIsNoEveMode(true); setIsEveMode(false); }}
+            className="w-5 h-5 border rounded flex items-center justify-center"
+          >
+            {isNoEveMode ? <CheckSquare /> : <Square />}
+          </div>
+          <span className="ml-2">No Eve Mode</span>
+        </label>
       </div>
 
       <button

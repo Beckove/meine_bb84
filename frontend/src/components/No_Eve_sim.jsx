@@ -58,6 +58,8 @@ export default function SimulationPage() {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [showLoopEnd, setShowLoopEnd] = useState(false);
 
+  const [progress, setProgress] = useState(0);
+
   // Calculate channel width and handle resize
   useLayoutEffect(() => {
     const updateWidth = () => {
@@ -70,27 +72,38 @@ export default function SimulationPage() {
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
-  // Animate photon on index change
-  useEffect(() => {
-    if (isPaused) {
-      controls.stop();
-      return;
-    }
-    if (currentIdx < bitCount) {
-      // reset to start for new index
-      controls.set({ x: 0 });
-      controls.start({ x: channelWidth, transition: { duration: 2.4, ease: 'linear' } });
-    }
-  }, [currentIdx, channelWidth, isPaused, controls]);
+// Thêm state track tiến độ
 
-  // Handle pause/resume without resetting position
-  useEffect(() => {
-    if (isPaused) {
-      controls.stop();
-    } else if (currentIdx < bitCount) {
-      controls.start({ x: channelWidth, transition: { duration: 2.4, ease: 'linear' } });
-    }
-  }, [isPaused]);
+// Khi currentIdx thay đổi, start animation và cập nhật progress
+useEffect(() => {
+  if (currentIdx < bitCount) {
+    setProgress(0);
+    controls.set({ x: 0 });
+    controls.start({
+      x: channelWidth,
+      transition: { duration: 2.4, ease: 'linear' },
+      onUpdate: ({ x }) => {
+        if (channelWidth > 0) {
+          setProgress(x / channelWidth);
+        }
+      }
+    });
+  }
+}, [currentIdx, channelWidth]);
+
+// Pause/Resume: tính remaining dựa trên progress
+useEffect(() => {
+  if (currentIdx >= bitCount) return;
+  if (isPaused) {
+    controls.stop();
+  } else {
+    const remaining = Math.max(0, 1 - progress);
+    controls.start({
+      x: channelWidth,
+      transition: { duration: remaining * 2.4, ease: 'linear' }
+    });
+  }
+}, [isPaused, progress, channelWidth, currentIdx]);
 
   // Update currentIdx and loop
   useEffect(() => {
@@ -199,6 +212,11 @@ export default function SimulationPage() {
             <div className="flex flex-col items-center mb-6">
               <div className="w-full h-16 relative">
                 <img src={classicalchan} alt="Classical Channel" className="absolute inset-0 w-full h-full object-contain opacity-80" />
+                                {showLoopEnd && (
+                  <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold bg-gray-900 bg-opacity-80 text-amber-300">
+                    Exchange information to get the sifted key
+                  </div>
+                )}
               </div>
               <div className="mt-1 text-sm font-medium text-amber-400">Classical Channel</div>
             </div>
@@ -216,12 +234,14 @@ export default function SimulationPage() {
                   <img src={getBaseImage(alice_bases[currentIdx])} alt="alice-base" className="absolute left-4 bottom-2 h-10 w-10" />
                   <img src={getBaseImage(bob_bases[currentIdx])} alt="bob-base" className="absolute right-4 bottom-2 h-10 w-10" />
                   <motion.img
+                    //key={currentIdx} // remount per index
                     src={alicePhoton}
                     alt="sliding-bit"
                     className="absolute top-1/2 transform -translate-y-1/2 h-10 w-10"
-                    initial={{ x: 0 }}
+                    //initial={{ x: 0 }}
                     animate={controls}
                     //key={currentIdx}
+                    initial={false}
                   />
                 </>
               )}

@@ -1,35 +1,48 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Atom, Zap } from 'lucide-react';
 
 export default function HomePage() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center justify-center w-full h-screen bg-gradient-to-br from-purple-900 via-indigo-800 to-blue-700">
-      <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-3xl p-12 shadow-2xl flex flex-col items-center space-y-8">
-        <h1 className="text-4xl font-extrabold text-white tracking-wider">BB84 QKD Simulation</h1>
-        <div className="flex flex-col sm:flex-row gap-6">
+    <div className="flex items-center justify-center w-full h-screen bg-gradient-to-br from-indigo-900 via-purple-800 to-black">
+      <div className="relative z-10 bg-white bg-opacity-10 backdrop-blur-lg rounded-3xl p-12 shadow-xl border border-purple-600 flex flex-col items-center space-y-10">
+        <h1 className="text-5xl font-extrabold text-indigo-900 tracking-wide">BB84 QKD Simulator</h1>
+        <p className="text-indigo-300 text-lg max-w-md text-center">Explore quantum key distribution with interactive visualization and secure simulation.</p>
+        <div className="flex flex-col sm:flex-row gap-8">
           <button
             onClick={() => navigate('/setting_page')}
-            className="px-8 py-4 bg-green-500 bg-opacity-80 hover:bg-opacity-100 text-white font-semibold rounded-full shadow-lg transform hover:scale-105 transition-transform"
+            className="flex items-center space-x-3 px-10 py-4 bg-gradient-to-r from-purple-600 to-indigo-500 hover:from-purple-500 hover:to-indigo-400 text-white font-semibold rounded-full shadow-lg transform hover:scale-105 transition-transform"
           >
-            No Eve Mode
-          </button>
-
-          <button
-            onClick={() => navigate('/eve')}
-            className="px-8 py-4 bg-red-500 bg-opacity-80 hover:bg-opacity-100 text-white font-semibold rounded-full shadow-lg transform hover:scale-105 transition-transform"
-          >
-            Eve Mode
+            <Atom size={24} />
+            <span>Visualization</span>
           </button>
 
           <button
             onClick={() => navigate('/simulation')}
-            className="px-8 py-4 bg-indigo-500 bg-opacity-80 hover:bg-opacity-100 text-white font-semibold rounded-full shadow-lg transform hover:scale-105 transition-transform"
+            className="flex items-center space-x-3 px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-500 hover:from-blue-500 hover:to-purple-400 text-white font-semibold rounded-full shadow-lg transform hover:scale-105 transition-transform"
           >
-            Simulation Mode
+            <Zap size={24} />
+            <span>Simulation Mode</span>
           </button>
         </div>
+      </div>
+      {/* Animated quantum particles background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {[...Array(30)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute bg-gradient-to-r from-pink-500 to-blue-500 opacity-20 rounded-full animate-float"
+            style={{
+              width: `${Math.random() * 20 + 10}px`,
+              height: `${Math.random() * 20 + 10}px`,
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animationDuration: `${Math.random() * 5 + 5}s`,
+            }}
+          />
+        ))}
       </div>
     </div>
   );

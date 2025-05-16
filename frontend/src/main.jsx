@@ -4,7 +4,8 @@ import { HashRouter, Routes, Route } from 'react-router-dom';
 
 import HomePage from './homepage.jsx';
 import App from './App.jsx';
-import SimulationPage from './components/simulation_page'
+import SimulationPage from './components/No_Eve_sim.jsx'
+import Sim_Eve from './components/Eve_sim.jsx';
 import './index.css';
 
 const container = document.getElementById('root');
@@ -17,6 +18,7 @@ root.render(
         <Route path="/" element={<HomePage />} />
         <Route path="/setting_page" element={<App />} /> {/* trang để set mấy tham số, là trang kế tiếp của HomePage */}
         <Route path="/no-eve" element={<SimulationPage />} /> {/* Trang mô phỏng k Eve */}
+        <Route path="/with-eve" element={<Sim_Eve />} /> {/* Trang mô phỏng có Eve */}
       </Routes>
     </HashRouter>
   </React.StrictMode>

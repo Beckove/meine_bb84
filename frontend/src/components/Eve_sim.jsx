@@ -1,15 +1,15 @@
-// It is absolutely good, 
-
+// Này ngon rồi
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, useAnimation } from 'framer-motion';
 
-import Sidebar from '../components/sidebar1';
-import AppBar from '../components/appbar';
-import ParameterPanel from '../components/parameters';
+import Sidebar from './sidebar1';
+import AppBar from './appbar';
+import ParameterPanel from './parameters';
 
 import Alice from '../assets/Alice.svg';
 import Bob from '../assets/Bob.svg';
+import Devil from '../assets/devil_eve.svg';
 import quantumchan from '../assets/qt_x2.svg';
 import classicalchan from '../assets/classic_x2.svg';
 import symbols_table from '../assets/symbols_img.svg';
@@ -40,29 +40,33 @@ export default function SimulationPage() {
     }
   }, [state, navigate]);
 
+  const aliceControls = useAnimation();
+  const eveControls = useAnimation();
+
   const {
     alice_bits = [],
     bob_bits = [],
+    eve_bits = [],
     alice_bases = [],
     bob_bases = [],
+    eve_bases = [],
     sifted_key = [],
     quantum_bit_error_rate = 0,
     matching_bases_count = 0,
   } = result;
 
   const bitCount = alice_bits.length;
+  // Pause/Resume state
   const [isPaused, setIsPaused] = useState(false);
-  const controls = useAnimation();
   const togglePause = () => setIsPaused(prev => !prev);
 
+  const controls = useAnimation();
   const channelRef = useRef(null);
   const [channelWidth, setChannelWidth] = useState(0);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [showLoopEnd, setShowLoopEnd] = useState(false);
-
   const [progress, setProgress] = useState(0);
 
-  // Calculate channel width and handle resize
   useLayoutEffect(() => {
     const updateWidth = () => {
       if (channelRef.current) {
@@ -74,40 +78,27 @@ export default function SimulationPage() {
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
-// Thêm state track tiến độ
-
-// Khi currentIdx thay đổi, start animation và cập nhật progress
-useEffect(() => {
-  if (currentIdx < bitCount) {
+  useEffect(() => {
+    if (currentIdx >= bitCount || channelWidth === 0 || isPaused) return;
+    aliceControls.set({ x: 0 });
     setProgress(0);
-    controls.set({ x: 0 });
-    controls.start({
-      x: channelWidth,
-      transition: { duration: 2.4, ease: 'linear' },
-      onUpdate: ({ x }) => {
-        if (channelWidth > 0) {
-          setProgress(x / channelWidth);
-        }
-      }
+    aliceControls.start({
+      x: channelWidth / 2 + 8,
+      transition: { duration: 1.2, ease: 'linear' },
+      onUpdate: ({ x }) => setProgress(x / channelWidth),
     });
-  }
-}, [currentIdx, channelWidth]);
+  }, [currentIdx, channelWidth, isPaused]);
 
-// Pause/Resume: tính remaining dựa trên progress
-useEffect(() => {
-  if (currentIdx >= bitCount) return;
-  if (isPaused) {
-    controls.stop();
-  } else {
-    const remaining = Math.max(0, 1 - progress);
-    controls.start({
+  useEffect(() => {
+    if (currentIdx >= bitCount || channelWidth === 0 || isPaused) return;
+    eveControls.set({ x: channelWidth / 2, opacity: 0 });
+    eveControls.start({
       x: channelWidth,
-      transition: { duration: remaining * 2.4, ease: 'linear' }
+      opacity: 1,
+      transition: { duration: 1.2, ease: 'linear', delay: 1.2 },
     });
-  }
-}, [isPaused, progress, channelWidth, currentIdx]);
+  }, [currentIdx, channelWidth, isPaused]);
 
-  // Update currentIdx and loop
   useEffect(() => {
     if (isPaused) return;
     if (currentIdx < bitCount) {
@@ -124,7 +115,7 @@ useEffect(() => {
       }, 2000);
       return () => clearTimeout(endTimer);
     }
-  }, [currentIdx, bitCount, isPaused, controls]);
+  }, [currentIdx, bitCount, isPaused]);
 
   const getBaseImage = base => (base === 0 ? rect_base : base === 1 ? diagonal_base : Nonee);
   const getBitImage = (base, bit) => {
@@ -136,6 +127,9 @@ useEffect(() => {
   const alicePhoton = alice_bits[currentIdx] != null
     ? getBitImage(alice_bases[currentIdx], alice_bits[currentIdx])
     : Nonee;
+  const evePhoton = eve_bits[currentIdx] != null
+    ? getBitImage(eve_bases[currentIdx], eve_bits[currentIdx])
+    : Nonee;
   const bobPhoton = bob_bits[currentIdx] != null
     ? getBitImage(bob_bases[currentIdx], bob_bits[currentIdx])
     : Nonee;
@@ -143,20 +137,23 @@ useEffect(() => {
   const measuredImages = [hor_bit, ver_bit, diagonal1_bit, diagonal2_bit];
   const bobImage = bobPhoton;
 
+return (
+    //<div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-black text-amber-300"> // Line này giữ màu grad quantum
+<div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-indigo-800 to-black text-amber-500 items-center">
 
-  return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-black text-amber-300">
       <div className="fixed inset-y-0 left-0 w-20 bg-gray-800 bg-opacity-50 pt-16 backdrop-blur-lg border-r border-amber-600 shadow-lg">
         <Sidebar />
       </div>
-      <div className="flex flex-col flex-1 ml-20 overflow-hidden pt-16">
+      <div className="items-center flex flex-col flex-1 ml-20 overflow-hidden pt-16">
         <AppBar />
-        <div className="flex-1 overflow-auto p-6">
-          <div className="flex justify-between mb-10">
+        <div className="flex-1 overflow-auto p-1 items-center">
+          <div className="flex justify-center mb-10">
             {/* Alice panel */}
             <div className="flex flex-col items-center w-64">
               <img src={Alice} alt="Alice" className="h-32 mb-4" />
-              <div className="w-full h-72 overflow-y-auto border border-amber-600 rounded-2xl p-4 bg-gray-800 bg-opacity-40">
+              <div className="color-blue-200 w-full h-72 overflow-y-auto border border-amber-600 rounded-2xl p-4 bg-opacity-40">
+               {/*</div><div className="color-blue-200 w-full h-72 overflow-y-auto border border-amber-600 rounded-2xl p-4 bg-gray-800 bg-opacity-40"> */}
+
                 <div className="text-2xl font-semibold mb-3 text-center text-amber-200">Alice</div>
                 {alice_bases.map((base, i) => (
                   <div
@@ -166,7 +163,7 @@ useEffect(() => {
                     }`}
                   >
                     <img src={getBaseImage(base)} alt="alice-base" className="h-10 w-10" />
-                    <img src={getBitImage(base, alice_bits[i])} alt="alice-bit" className="h-10 w-10" />
+                    <img src={getBitImage(base, alice_bits[i])} alt="alice-bit" className="scale-1.1 h-10 w-10" />
                     <span className="text-amber-100 text-2xl">{alice_bits[i]}</span>
                   </div>
                 ))}
@@ -177,13 +174,6 @@ useEffect(() => {
             <div className="flex flex-col items-center px-6">
               <div className="mb-2 text-3xl font-semibold text-amber-400">Bits: {bitCount}</div>
               <img src={Nonee} alt="Placeholder" className="h-80 opacity-70 mb-4" />
-              <button
-                onClick={togglePause}
-                disabled={showLoopEnd}
-                className="px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-lg transform hover:scale-105 transition-transform disabled:opacity-50"
-              >
-                {isPaused ? 'Resume' : 'Pause'}
-              </button>
             </div>
 
             {/* Bob panel */}
@@ -210,63 +200,87 @@ useEffect(() => {
           </div>
 
           {/* Classical channel */}
-          <div className="mb-10">
-            <div className="flex flex-col items-center mb-6">
-              <div className="w-full h-16 relative">
-                <img src={classicalchan} alt="Classical Channel" className="absolute inset-0 w-full h-full object-contain opacity-80" />
-                                {showLoopEnd && (
-                  <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold bg-gray-900 bg-opacity-80 text-amber-300">
-                    Exchange information to get the sifted key
-                  </div>
-                )}
-              </div>
-              <div className="mt-1 text-sm font-medium text-amber-400">Classical Channel</div>
+          <div className="mb-4 flex flex-col items-center">
+            <div className="w-full h-16 relative">
+              <img src={classicalchan} alt="Classical Channel" className="scale-0.7 absolute inset-0 w-full h-full object-contain opacity-80" />
+              {showLoopEnd && (
+                <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold bg-gray-900 bg-opacity-80 text-amber-300">
+                  Exchange information to get the sifted key
+                </div>
+              )}
             </div>
+            <div className="mt-1 text-sm font-medium text-amber-400">Classical Channel</div>
+          </div>
 
-            {/* Quantum channel */}
-          <div className="mb-10 flex flex-col items-center">
-            <div className="flex justify-between w-full px-4 mb-2">
+          {/* Quantum channel */}
+          <div className="-mt-6 mb-4 flex flex-col justify-center">
+            <div className="flex justify-between w-full px-4 mb-2 ">
               <img src={alicePhoton} alt="alice-photon" className="h-10 w-10" />
               <img src={bobPhoton} alt="bob-photon" className="h-10 w-10" />
             </div>
             <div ref={channelRef} className="w-full h-16 relative overflow-hidden rounded-lg border border-amber-600 bg-gray-800 bg-opacity-30">
-              <img src={quantumchan} alt="Quantum Channel" className="absolute inset-0 w-full h-full object-contain opacity-60" />
+              {/* Background*/}
+              <img src={quantumchan} alt="" className="scale-0.7 absolute left-20 top-0 w-80 h-full object-contain opacity-60" />
+              <img src={Devil}       alt=""   className="scale-0.8 absolute left-1/2 top-0 transform -translate-x-1/2 w-40 h-full object-contain opacity-100 z-20"/>
+              <img src={quantumchan} alt="" className="scale-0.7  absolute right-20 top-0 w-80 h-full object-contain opacity-60" />
               {currentIdx < bitCount && (
                 <>
+                  {/* Alice & Bob bases */}
                   <img src={getBaseImage(alice_bases[currentIdx])} alt="alice-base" className="absolute left-4 bottom-2 h-10 w-10" />
-                  <img src={getBaseImage(bob_bases[currentIdx])} alt="bob-base" className="absolute right-4 bottom-2 h-10 w-10" />
-                  <motion.img
-                    //key={currentIdx} // remount per index
+                  <img src={getBaseImage(eve_bases[currentIdx])} alt="eve-base" className="absolute left-105 bottom-2 h-10 w-10" />
+                  <img src={getBitImage(eve_bases[currentIdx], eve_bits[currentIdx])} alt="eve-bit" className="scale-1.1 absolute left-135 bottom-2 h-10 w-10" />
+                  <img src={getBaseImage(bob_bases[currentIdx])}   alt="bob-base"   className="absolute right-4 bottom-2 h-10 w-10" />
+                  {/* Phase 1: Alice photon -> center */}
+                  
+                    <motion.img
+                    key={`alice-${currentIdx}`}
                     src={alicePhoton}
-                    alt="sliding-bit"
-                    className="absolute top-1/2 transform -translate-y-1/2 h-10 w-10"
-                    //initial={{ x: 0 }}
-                    animate={controls}
-                    //key={currentIdx}
-                    initial={false}
-                  />
+                    alt="alice-photon"
+                    initial={{ x: 0 }}
+                    animate={aliceControls}
+                    style={{ opacity: progress < 0.5 ? 1 : 0 }}
+                    className="scale-1.1 absolute top-1/2 -translate-y-1/2 h-10 w-10"
+                    />
+                  {/* Phase 2: Eve photon -> right */}
+                  
+                  {channelWidth > 0 && (
+                    <motion.img
+                      key={`eve-${currentIdx}-${channelWidth}`}
+                      src={evePhoton}
+                      alt="eve-photon"
+                      initial={{ x: channelWidth / 2, opacity: 0 }}
+                      animate={{ x: channelWidth, opacity: 1 }}
+                      transition={{
+                        x: { duration: 1.2, ease: 'linear', delay: 1.2 },
+                        opacity: { duration: 0.2, delay: 1.2 }
+                      }}
+                      className="scale-1.1 absolute left-0 top-1/2 -translate-y-1/2 h-10 w-10 z-10"
+                    />
+                  )}
+
                 </>
               )}
-                {showLoopEnd && (
-                  <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold bg-gray-900 bg-opacity-80 text-amber-300">
-                    LOOP END
-                  </div>
-                )}
-              </div>
-              <div className="mt-1 text-sm font-medium text-amber-400">Quantum Channel</div>
 
-              <div className="w-full mt-6 border border-amber-600 rounded-2xl p-4 bg-gray-800 bg-opacity-30">
-                <div className="text-center font-semibold text-amber-300 mb-2">Measured Photons</div>
-                <div className="flex justify-center space-x-4">
-                  {measuredImages.map((img, idx) => (
-                    <img
-                      key={idx}
-                      src={img}
-                      alt={`meas-${idx}`}
-                      className={`h-12 w-12 ${img === bobImage ? 'ring-4 ring-amber-400 rounded-full' : 'opacity-60'}`}
-                    />
-                  ))}
+              {showLoopEnd && (
+                <div className="absolute inset-0 flex items-center justify-center text-4xl font-bold bg-gray-900 bg-opacity-80 text-amber-300 z-100">
+                  LOOP END
                 </div>
+              )}
+            </div>
+            <div className="mt-1 text-sm font-medium text-amber-400">Quantum Channel</div>
+
+            {/* Measured photons display */}
+            <div className="w-full mt-6 border border-amber-600 rounded-2xl p-4 bg-gray-800 bg-opacity-30">
+              <div className="text-center font-semibold text-amber-300 mb-2">Bob Measured Photons</div>
+              <div className="flex justify-center space-x-4">
+                {measuredImages.map((img, idx) => (
+                  <img
+                    key={idx}
+                    src={img}
+                    alt={`meas-${idx}`}
+                    className={`h-12 w-12 ${img === bobImage ? 'ring-4 ring-amber-400 rounded-full' : 'opacity-60'}`}
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -274,10 +288,12 @@ useEffect(() => {
           {/* Results summary */}
           <div className="w-full border border-amber-600 rounded-2xl p-6 bg-gray-800 bg-opacity-40 text-amber-200 space-y-2 mb-10">
             <div><strong>Alice bits:</strong> {alice_bits.join(' ')}</div>
-            <div><strong>Alice bases:</strong> {alice_bases.join(' ')}</div>
             <div><strong>Bob bits:</strong> {bob_bits.map(b => b == null ? '-' : b).join(' ')}</div>
-            <div><strong>Bob bases:</strong> {bob_bases.join(' ')}</div>
-            <div><strong>Sifted key:</strong> {sifted_key.join('')}</div>
+            <div><strong>Eve bits:</strong>   {eve_bits.join(' ')}</div>
+            <div><strong>Alice bases:</strong> {alice_bases.join(' ')}</div>
+            <div><strong>Bob bases:</strong>   {bob_bases.join(' ')}</div>
+            <div><strong>Eve bases:</strong>   {eve_bases.join(' ')}</div>
+            <div><strong>Sifted key:</strong>  {sifted_key.join('')}</div>
             <div><strong>Matching bases:</strong> {matching_bases_count}</div>
             <div><strong>QBER:</strong> {(quantum_bit_error_rate * 100).toFixed(2)}%</div>
           </div>
