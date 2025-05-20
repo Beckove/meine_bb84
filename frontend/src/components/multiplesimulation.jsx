@@ -2,20 +2,15 @@ import React, { useState } from 'react';
 
 const xParams = [
   { value: 'Detection Efficiency', label: 'Detection efficiency (%)' },
-  { value: 'Fiber Length', label: 'Fiber length (km)' },
-  { value: 'Fiber Loss', label: 'Fiber loss (dB/km)' },
+  { value: 'Length', label: 'Length (m)' },
   { value: 'Source Efficiency', label: 'Source efficiency (%)' },
   { value: 'Sop Mean Deviation', label: 'Sop Mean Deviation (rad)' },
   { value: 'Perturb Probability', label: 'Perturb Probability (%)' }
 ];
 
 const yParams = [
-  { value: 'Key Length', label: 'Key length' },
-  { value: 'Key Rate', label: 'Key rate' },
-  { value: 'Combined Efficiency', label: 'Combined efficiency' },
-  { value: 'Sifted Bit Rate', label: 'Sifted bit rate' },
-  { value: 'Error Rate', label: 'Error rate' },
-  { value: 'QBER', label: 'QBER' }
+  { value: 'QBER', label: 'QBER' },
+    { value: 'Sifted Key', label: 'Sifted Key' }
 ];
 
 const MultipleSimulationsUI = () => {
@@ -151,7 +146,7 @@ const MultipleSimulationsUI = () => {
           <div className="flex-grow bg-white rounded p-4 flex flex-col items-center justify-center border border-gray-200">
             {chartUrl ? (
               <>
-                <img src={chartUrl} alt="Simulation result" className="max-h-96 max-w-full rounded" />
+<img src={chartUrl} alt="Simulation result" className="max-h-[32rem] max-w-full rounded" />
                 <button
                   onClick={() => setIsModalOpen(true)}
                   className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-black rounded shadow"
@@ -175,7 +170,7 @@ const MultipleSimulationsUI = () => {
           <img
             src={chartUrl}
             alt="Simulation result large"
-            className="max-h-full max-w-full rounded shadow-lg"
+  className="w-full h-[600px] object-contain rounded"
             onClick={(e) => e.stopPropagation()} // ngăn đóng modal khi click lên ảnh
           />
           <button

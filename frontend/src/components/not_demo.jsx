@@ -30,6 +30,8 @@ export default function SimuPage() {
     qber: '--',
     sValue: '--',
     combinedEfficiency: '--',
+    siftedkey: '--',
+    siftedkeyrate: '--',
   });
 
   const handleChange = (e) => {
@@ -48,6 +50,7 @@ export default function SimuPage() {
       qber: '--',
       sValue: '--',
       combinedEfficiency: '--',
+      siftedkey: '--'
     });
 
     let currentProgress = 0;
@@ -82,6 +85,7 @@ export default function SimuPage() {
         qber: data.qber ?? '--',
         sValue: data.sValue ?? '--',
         combinedEfficiency: data.combinedEfficiency ?? '--',
+        siftedkey: data.siftedkey ?? '--',
       });
     } catch (err) {
       console.error('Simulation error:', err);
@@ -100,10 +104,10 @@ export default function SimuPage() {
   };
 
   const paramFields = [
-    { label: 'Source rate', name: 'sourceRate', unit: 'MHz' },
+    // { label: 'Source rate', name: 'sourceRate', unit: 'MHz' },
     { label: 'Source efficiency', name: 'sourceEfficiency', unit: '%' },
-    { label: 'Fiber length', name: 'fiberLength', unit: 'km' },
-    { label: 'Fiber loss', name: 'fiberLoss', unit: 'dB/km' },
+    { label: 'FSO length', name: 'FSO Length', unit: 'km' },
+    // { label: 'Fiber loss', name: 'fiberLoss', unit: 'dB/km' },
     { label: 'Detector efficiency', name: 'detectorEfficiency', unit: '%' },
     { label: 'Perturb probability', name: 'perturbProb', unit: '%' },
     { label: 'SOP mean deviation', name: 'sopDeviation', unit: 'rad' },
@@ -230,12 +234,9 @@ export default function SimuPage() {
               <div>
                 <h2 className="text-xl font-semibold mb-4">Results</h2>
                 {[
-                  { label: 'Key length', name: 'keyLength' },
-                  { label: 'Key rate (Hz)', name: 'keyRate' },
-                  { label: 'QBER (%)', name: 'qber' },
-                  { label: 'S value', name: 'sValue' },
-                  { label: 'Combined efficiency (%)', name: 'combinedEfficiency' },
-                ].map(({ label, name }, idx) => (
+  { label: 'Sifted Key', name: 'siftedkey' },
+  { label: 'QBER (%)', name: 'qber' },
+].map(({ label, name }, idx) => (
                   <div key={idx} className="mb-4">
                     <label className="block mb-1 text-sm font-medium">{label}</label>
                     <input

@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, send_file
 import bb84
-import bb84_simulation as Simu
+import bb84_fso as Simu
 from flask_cors import CORS
 import io
 import numpy as np
@@ -68,68 +68,56 @@ def bb84_simulation():
     eavesdropping_enable = data["eavesdropping"]
     sopUncertainty_enable = data["sopUncertainty"]
 
-    source_generation_rate = float(data["sourceRate"])*pow(10,6)
-    source_efficiency = float(data["sourceEfficiency"])
-    fiber_length = float(data["fiberLength"])
-    fiber_loss = float(data["fiberLoss"])
-    detector_efficiency = float(data["detectorEfficiency"])
-    perturbProb = float(data["perturbProb"])
-    sopDeviation = float(data["sopDeviation"])
-    cross_check_fraction = float(data["qberFraction"])/100
 
     params = {
         "losses": data["losses"],
         "perturbations": data["perturbations"],
         "eavesdropping": data["eavesdropping"],
         "sopUncertainty": data["sopUncertainty"],
-        "sourceRate": float(data["sourceRate"]) * 72.6e6,  # MHz -> Hz
+        "sourceRate": None,  # MHz -> Hz
         "sourceEfficiency": float(data["sourceEfficiency"]),
-        "fiberLength": float(data["fiberLength"]),
-        "fiberLoss": float(data["fiberLoss"]),
+        "fiberLength": None,
+        "fiberLoss": None,
+        "L": float(data["FSO Length"]) * 1000    ,
         "detectorEfficiency": float(data["detectorEfficiency"]),
-        "perturbProb": float(data["perturbProb"]),
+        "perturbProb": float(data["perturbProb"])/100,
         "sopDeviation": float(data["sopDeviation"]),
         "qberFraction": float(data["qberFraction"]) / 100
     }
+
     n_bits = int(data["qubits"])
     alice_bits, bob_bits, alice_bases, bob_bases, sifted_key, qber, matching_bases_count=Simu.bb84(n_bits, losses_enable, perturbations_enable, sopUncertainty_enable, eavesdropping_enable, params)
 
     # Đếm số bit của Bob (tính `None` như 0)
     bob_bits_len = len([b for b in bob_bits if b is not None])  # Số bit thực sự của Bob
     total_bob_bits = len(bob_bits)  # Tổng số bits của Bob (bao gồm cả None)
-    ce = Simu.combined_efficiency_cal(source_efficiency, fiber_length, detector_efficiency, fiber_loss)
-    key_length = Simu.key_length_cal(50, ce, cross_check_fraction)
-    key_rate = Simu.key_rate_cal(source_generation_rate, ce, cross_check_fraction)
-
+    # ce = bb84.combined_efficiency_cal(source_efficiency, fiber_length, detector_efficiency, fiber_loss)
+    # key_length = bb84.key_length_cal(50, ce, cross_check_fraction)
+    # key_rate = bb84.key_rate_cal(source_generation_rate, ce, cross_check_fraction)
+    siftedkey = len(sifted_key)
+    # siftedkey_rate = siftedkey * source_generation_rate
+    print(siftedkey)
     print("--==============================================================--")
     return jsonify({
-        "keyLength": key_length,
-        "keyRate": key_rate,
+        "siftedkey": siftedkey,
+        # "siftedkeyrate": key_rate,
         "qber": qber*100,
         "sValue": None,
-        "combinedEfficiency": ce
+        "combinedEfficiency": None
     })
 @app.route('/plot_simulation', methods=['POST'])
 def plot_simulation():
-    source_generation_rate = 72.6e6  # MHz
-    source_efficiency = 0.058  # fraction usable
-    fiber_length = 20  # km
-    fiber_loss = 0.2  # dB/km
-    detector_efficiency = 0.6  # probability of detection
-    perturb_probability = 0.01  # probability of random polarization perturbation
-    sop_mean_deviation = 0.05  # mean deviation (radian)
-    cross_check_fraction = 0.1
-    n_bits = 100000
 
     params = {
         "sourceRate": 72.6e6,  # 1 MHz - tốc độ khá thấp để mô phỏng đơn giản
         "sourceEfficiency": 0.7,  # 70% - một nguồn tốt, nhưng không hoàn hảo
-        "fiberLength": 20,  # 20 km - trung bình cho mô phỏng
-        "fiberLoss": 0.2,  # 0.2 dB/km - gần đúng chuẩn ITU-T cho cáp quang đơn mode (SMF)
         "detectorEfficiency": 0.6,  # 60% - realistic for SNSPD or APD
         "perturbProb": 0.01,  # 1% - giả định có chút nhiễu
         "sopDeviation": 0.05,  # nhỏ - mô phỏng lệch phân cực nhẹ
-        "qberFraction": 0.1  # 10% bit mở ra để tính QBER
+        "qberFraction":0.2,  # 10% bit mở ra để tính QBER
+        "muy": 0,
+        "sigma": 0.5,
+        "L": 1000,
     }
 
     data = request.json
@@ -140,68 +128,57 @@ def plot_simulation():
     point = data['point']
 
     step = (end - start) / point
-    xs, ces, kls, krs, sbrs, ers, qbers  = [], [], [], [], [], [], []
-
+    Qber = []
+    xs = []
+    kr = []
+    sk = []
     for i in range(point):
-        x = start + step * i
-        xs.append(x)
+        if name_x == 'C2n':
+            x = pow(10,-start) + ((pow(10,-end) - pow(10,-start))/point) * i
+            xs.append(x)
+            params["C2n"] = x
+        else:
+            x = start + step * i
+            xs.append(x)
+            if name_x == 'Detection Efficiency':
+                detector_efficiency = x/100
+                params["detectorEfficiency"] = x/100
+            elif name_x == 'Length':
+                fiber_length = x
+                params["L"] = x
+                params["qberFraction"] = 1
+            elif name_x == 'Source Efficiency':
+                source_efficiency = x/100
+                params["sourceEfficiency"] = x/100
+            elif name_x == 'Sop Mean Deviation':
+                params["sopDeviation"] = x
+            elif name_x == 'Perturb Probability':
+                params["perturbProb"] = x/100
 
-        if name_x == 'Detection Efficiency':
-            detector_efficiency = x/100
-            params["detectorEfficiency"] = x/100
-        elif name_x == 'Fiber Length':
-            fiber_length = x
-            params["fiberLength"] = x
-        elif name_x == 'Fiber Loss':
-            fiber_loss = x
-            params["fiberLoss"] = x
-        elif name_x == 'Source Efficiency':
-            source_efficiency = x/100
-            params["sourceEfficiency"] = x/100
-        elif name_x == 'Sop Mean Deviation':
-            params["sopDeviation"] = x
-        elif name_x == 'Perturb Probability':
-            params["perturbProb"] = x/100
-
-        if name_y == "QBER" or name_y == "Error Rate":
-            n_bits = 1000
-            alice_bits, bob_bits, alice_bases, bob_bases, sifted_key, qber, matching_bases_count = Simu.bb84(n_bits,
-                                                                                                             False,
-                                                                                                             True,
-                                                                                                             True,
-                                                                                                             False,
-                                                                                                             params)
-            qbers.append(qber*100)
-
-        ce = Simu.combined_efficiency_cal(source_efficiency, fiber_length, detector_efficiency, fiber_loss)
-        kl = Simu.key_length_cal(n_bits, ce, cross_check_fraction)
-        kr = Simu.key_rate_cal(source_generation_rate, ce, cross_check_fraction)
-        sbr = Simu.sifted_bit_rate(source_generation_rate, ce)
-        if(name_y == "Error Rate"):
-            er = Simu.error_rate(source_generation_rate, ce, cross_check_fraction, qber)
-            ers.append(er)
-        ces.append(ce)
-        kls.append(kl)
-        krs.append(kr)
-        sbrs.append(sbr)
-
-    if name_y == "Combined Efficiency":
-        y = ces
-    elif name_y == "Key Length":
-        y = kls
-        name_y = "Key Length (bit)"
-    elif name_y == "Key Rate":
-        y = krs
-        name_y = "Key Rate (Hz)"
-    elif name_y == "Sifted Bit Rate":
-        y = sbrs
-        name_y = "Sifted Bit Rate (Hz)"
-    elif name_y == "Error Rate":
-        y = ers
-        name_y = "Error Rate (Hz)"
+        print(f"step {i+1} ")
+        n_bits = 100000
+        alice_bits, bob_bits, alice_bases, bob_bases, sifted_key, qber, matching_bases_count = Simu.bb84(n_bits,
+                                                                                                         True,
+                                                                                                         True,
+                                                                                                         True,
+                                                                                                         False,
+                                                                                                         params)
+        key_rate = len(sifted_key) * (1-qber) * (1-0.8)
+        kr.append(key_rate)
+        Qber.append(qber * 100)
+        sk.append(len(sifted_key))
+    y = Qber
+    if name_y == "Sifted Key":
+        y = sk
+        name_y = "Sifted Key (Bit)"
     elif name_y == "QBER":
-        y = qbers
+        y = Qber
         name_y = "QBER (%)"
+    if name_x == "Length": name_x = "Length (m)"
+    elif name_x == 'Sop Mean Deviation':
+        name_x = "Sop Mean Deviation (rad)"
+    elif name_x == 'Perturb Probability':
+        name_x = "Perturb Probability (%)"
     fig, ax = plt.subplots()
     ax.plot(xs, y, marker='o', linestyle='--', color='blue')
     ax.set_xlabel(name_x)
