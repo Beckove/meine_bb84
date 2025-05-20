@@ -105,7 +105,6 @@ export default function SimuPage() {
 
   const paramFields = [
     // { label: 'Source rate', name: 'sourceRate', unit: 'MHz' },
-    { label: 'Source efficiency', name: 'sourceEfficiency', unit: '%' },
     { label: 'FSO length', name: 'FSO Length', unit: 'km' },
     // { label: 'Fiber loss', name: 'fiberLoss', unit: 'dB/km' },
     { label: 'Detector efficiency', name: 'detectorEfficiency', unit: '%' },

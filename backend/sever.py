@@ -75,7 +75,7 @@ def bb84_simulation():
         "eavesdropping": data["eavesdropping"],
         "sopUncertainty": data["sopUncertainty"],
         "sourceRate": None,  # MHz -> Hz
-        "sourceEfficiency": float(data["sourceEfficiency"]),
+        "sourceEfficiency": None,
         "fiberLength": None,
         "fiberLoss": None,
         "L": float(data["FSO Length"]) * 1000    ,
