@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
 const xParams = [
-  { value: 'Detection Efficiency', label: 'Detection efficiency (%)' },
+  { value: 'Detection Efficiency', label: 'Detector efficiency (%)' },
   { value: 'Length', label: 'Length (m)' },
-  { value: 'Sop Mean Deviation', label: 'Sop Mean Deviation (rad)' },
+  // { value: 'Sop Mean Deviation', label: 'Sop Mean Deviation (rad)' },
   { value: 'Perturb Probability', label: 'Perturb Probability (%)' }
 ];
 

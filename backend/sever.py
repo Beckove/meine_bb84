@@ -66,22 +66,22 @@ def bb84_simulation():
     losses_enable = data["losses"]
     perturbations_enable = data["perturbations"]
     eavesdropping_enable = data["eavesdropping"]
-    sopUncertainty_enable = data["sopUncertainty"]
+    sopUncertainty_enable = False
 
 
     params = {
         "losses": data["losses"],
         "perturbations": data["perturbations"],
         "eavesdropping": data["eavesdropping"],
-        "sopUncertainty": data["sopUncertainty"],
+        "sopUncertainty": False,
         "sourceRate": None,  # MHz -> Hz
         "sourceEfficiency": None,
         "fiberLength": None,
         "fiberLoss": None,
         "L": float(data["FSO Length"]) * 1000    ,
-        "detectorEfficiency": float(data["detectorEfficiency"]),
+        "detectorEfficiency": float(data["detectorEfficiency"])/100,
         "perturbProb": float(data["perturbProb"])/100,
-        "sopDeviation": float(data["sopDeviation"]),
+        "sopDeviation": 0,
         "qberFraction": float(data["qberFraction"]) / 100
     }
 
@@ -160,7 +160,7 @@ def plot_simulation():
         alice_bits, bob_bits, alice_bases, bob_bases, sifted_key, qber, matching_bases_count = Simu.bb84(n_bits,
                                                                                                          True,
                                                                                                          True,
-                                                                                                         True,
+                                                                                                         False,
                                                                                                          False,
                                                                                                          params)
         key_rate = len(sifted_key) * (1-qber) * (1-0.8)

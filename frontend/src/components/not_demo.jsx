@@ -109,7 +109,7 @@ export default function SimuPage() {
     // { label: 'Fiber loss', name: 'fiberLoss', unit: 'dB/km' },
     { label: 'Detector efficiency', name: 'detectorEfficiency', unit: '%' },
     { label: 'Perturb probability', name: 'perturbProb', unit: '%' },
-    { label: 'SOP mean deviation', name: 'sopDeviation', unit: 'rad' },
+    // { label: 'SOP mean deviation', name: 'sopDeviation', unit: 'rad' },
   ];
 
   return (
@@ -189,7 +189,7 @@ export default function SimuPage() {
                   { label: 'Losses enabled', name: 'losses' },
                   { label: 'Perturbations enabled', name: 'perturbations' },
                   { label: 'Eavesdropping enabled', name: 'eavesdropping' },
-                  { label: 'SOP uncertainty enabled', name: 'sopUncertainty' },
+                 // { label: 'SOP uncertainty enabled', name: 'sopUncertainty' },
                 ].map(({ label, name }, idx) => (
                   <div key={idx} className="flex items-center space-x-2 mb-3">
                     <input
