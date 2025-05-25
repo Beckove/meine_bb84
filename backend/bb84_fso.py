@@ -121,14 +121,18 @@ def bb84(n_bits, loss_enable, perturbation_enable, sop_deviation_enable, eavesdr
     # sigma = sigma_squared(param["C2n"], param["L"])
     x = math.exp(10)
     sigma = math.log(0.5 + 1)
-    param["fading"] = np.random.lognormal(mean=-sigma / 2, sigma=math.sqrt(sigma), size=1)
-
+    # C2n = pow(10,-14)
+    # lamda = 1.55*pow(10,-6)
+    # k = (2*3.14)/lamda
+    # sigma = 1.23*C2n*pow(k,(7/6))*pow(param["L"],(11/6))
+    param["fading"] = np.random.lognormal(mean=-sigma/2, sigma=math.sqrt(sigma), size=1)
+    print("k2")
 
     start = time.time()
     for i, (bit, a_basis, b_basis) in enumerate(zip(alice_bits, alice_bases, bob_bases)):
 
-        if (i + 1) % 1000 == 0:
-            temp_fading = np.random.lognormal(mean=-sigma / 2, sigma=math.sqrt(sigma), size=1)
+        if (i + 1) % 100 == 0:
+            temp_fading = np.random.lognormal(mean=-sigma/2, sigma=math.sqrt(sigma), size=1)
             param["fading"] = temp_fading
             # print(f"[{i + 1}] Updated fading: {param['fading']:.4f}")
 

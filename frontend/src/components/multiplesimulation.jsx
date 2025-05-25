@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const xParams = [
   { value: 'Detection Efficiency', label: 'Detector efficiency (%)' },
-  { value: 'Length', label: 'Length (m)' },
+  { value: 'Length', label: 'Length (km)' },
   // { value: 'Sop Mean Deviation', label: 'Sop Mean Deviation (rad)' },
   { value: 'Perturb Probability', label: 'Perturb Probability (%)' }
 ];

@@ -132,20 +132,24 @@ def plot_simulation():
     xs = []
     kr = []
     sk = []
-    for i in range(point):
+    for i in range(point+1):
         if name_x == 'C2n':
             x = pow(10,-start) + ((pow(10,-end) - pow(10,-start))/point) * i
             xs.append(x)
             params["C2n"] = x
         else:
-            x = start + step * i
-            xs.append(x)
+            if(i == point):
+                x = end
+                xs.append(x)
+            else:
+                x = start + step * i
+                xs.append(x)
             if name_x == 'Detection Efficiency':
                 detector_efficiency = x/100
                 params["detectorEfficiency"] = x/100
             elif name_x == 'Length':
-                fiber_length = x
-                params["L"] = x
+                # fiber_length = x
+                params["L"] = x*1000
                 params["qberFraction"] = 1
             elif name_x == 'Source Efficiency':
                 source_efficiency = x/100
@@ -166,15 +170,15 @@ def plot_simulation():
         key_rate = len(sifted_key) * (1-qber) * (1-0.8)
         kr.append(key_rate)
         Qber.append(qber * 100)
-        sk.append(len(sifted_key))
+        sk.append(len(sifted_key)/1000)
     y = Qber
     if name_y == "Sifted Key":
         y = sk
-        name_y = "Sifted Key (Bit)"
+        name_y = "Sifted Key (KBit)"
     elif name_y == "QBER":
         y = Qber
         name_y = "QBER (%)"
-    if name_x == "Length": name_x = "Length (m)"
+    if name_x == "Length": name_x = "FSO Length (km)"
     elif name_x == 'Sop Mean Deviation':
         name_x = "Sop Mean Deviation (rad)"
     elif name_x == 'Perturb Probability':
@@ -187,11 +191,18 @@ def plot_simulation():
     ax.grid(True)
     ax.legend()
 
+    # Đặt xticks là 0, 0.5, 1, ..., 3
+    # ax.set_xticks(np.arange(start, end + 0.5, 0.5))
+
+    # Giới hạn trục x từ 1 đến 3
+    ax.set_xlim(start, end)
+
     buf = io.BytesIO()
     plt.savefig(buf, format='png')
     buf.seek(0)
-    plt.close()
+    plt.close(fig)
     return send_file(buf, mimetype='image/png')
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
