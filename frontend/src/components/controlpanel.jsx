@@ -1,4 +1,3 @@
-// components/controlpanel.jsx
 import React, { useState, useEffect } from 'react';
 import { Square, CheckSquare, Rocket } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -37,47 +36,57 @@ export default function ControlPanel({ onStart }) {
   }, [isPopupVisible]);
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-2xl text-center space-y-6">
-      <h2 className="text-lg font-semibold">Number of Bits</h2>
+    <div
+      className="p-10 rounded-3xl text-center space-y-12 border border-white/30"
+      style={{
+        background: 'rgba(255, 255, 255, 0.2)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.25)',
+      }}
+    >
+      <h2 className="text-4xl font-extrabold text-indigo-900 drop-shadow">Number of Bits</h2>
+
       <input
         type="number"
         value={bitCount}
         onChange={e => setBitCount(+e.target.value)}
-        className="mx-auto w-20 h-10 border rounded text-center"
+        className="mx-auto w-40 h-20 text-4xl border-2 border-indigo-300 rounded-xl text-center font-semibold bg-white/80 text-indigo-900 placeholder-indigo-400 shadow-md"
       />
 
-      <div className="flex space-x-6 justify-center">
-        <label className="flex items-center cursor-pointer">
+      <div className="flex space-x-16 justify-center items-center text-3xl font-bold text-indigo-800">
+        <label className="flex items-center cursor-pointer space-x-6 hover:scale-110 transition-transform">
           <div
             onClick={() => { setIsEveMode(true); setIsNoEveMode(false); }}
-            className="w-5 h-5 border rounded flex items-center justify-center"
+            className="w-14 h-14 border-2 border-indigo-500 rounded-xl flex items-center justify-center bg-white/40"
           >
-            {isEveMode ? <CheckSquare /> : <Square />}
+            {isEveMode ? <CheckSquare className="w-10 h-10 text-pink-600" /> : <Square className="w-10 h-10 text-indigo-400" />}
           </div>
-          <span className="ml-2">Eve Mode</span>
+          <span>Eve Mode</span>
         </label>
 
-        <label className="flex items-center cursor-pointer">
+        <label className="flex items-center cursor-pointer space-x-6 hover:scale-110 transition-transform">
           <div
             onClick={() => { setIsNoEveMode(true); setIsEveMode(false); }}
-            className="w-5 h-5 border rounded flex items-center justify-center"
+            className="w-14 h-14 border-2 border-indigo-500 rounded-xl flex items-center justify-center bg-white/40"
           >
-            {isNoEveMode ? <CheckSquare /> : <Square />}
+            {isNoEveMode ? <CheckSquare className="w-10 h-10 text-pink-600" /> : <Square className="w-10 h-10 text-indigo-400" />}
           </div>
-          <span className="ml-2">No Eve Mode</span>
+          <span>No Eve Mode</span>
         </label>
       </div>
 
       <button
         onClick={handleStart}
-        className="inline-flex items-center space-x-2 px-6 py-2 bg-indigo-200 rounded-lg"
+className="inline-flex items-center space-x-4 px-12 py-6 bg-pink-500 text-black rounded-3xl text-5xl font-black shadow-lg hover:bg-pink-400 transition"
       >
-        <Rocket /><span>Start</span>
+        <Rocket className="w-10 h-10" />
+        <span>Start</span>
       </button>
 
       {isPopupVisible && (
         <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-          <div className="bg-black text-red-500 p-4 rounded-lg w-100 h-50 flex items-center justify-center text-center pointer-events-auto">
+          <div className="bg-black bg-opacity-80 text-red-500 p-8 rounded-2xl text-3xl pointer-events-auto text-center">
             {popupMessage}
           </div>
         </div>

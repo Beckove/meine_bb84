@@ -1,8 +1,9 @@
+import io
 import numpy as np
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import Aer
+import matplotlib.pyplot as plt
 
-# Giữ nguyên tên tham số frontend (camelCase)
 def setup_parameters(params):
     defaults = {
         'perturbProbability': 0.1,
@@ -27,10 +28,6 @@ def apply_perturbation(qc, q, perturbProbability):
         theta = np.random.uniform(0, np.pi)
         qc.ry(theta, q)
 
-def apply_sop_deviation(qc, q, sopMeanDeviation):
-    theta = np.random.normal(0, sopMeanDeviation)
-    qc.ry(theta, q)
-
 def prepare_qubit(bit, basis):
     qc = QuantumCircuit(1, 1)
     if basis == 0:
@@ -47,7 +44,6 @@ def transmit(qc, params):
     if not photon_survives(params['fiberLength'], params['fiberLoss'], params['sourceEfficiency'], params['detectorEfficiency']):
         return None
     apply_perturbation(qc, 0, params['perturbProbability'])
-    apply_sop_deviation(qc, 0, params['sopMeanDeviation'])
     return qc
 
 def measure_qubit(qc, basis):

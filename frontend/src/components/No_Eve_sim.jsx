@@ -31,24 +31,66 @@ export default function SimulationPage() {
 
   const [result] = useState(state?.result || {});
   const [inputParams] = useState(state?.inputParams || {});
+  const [circuitSvg, setCircuitSvg] = useState(null);
 
-  useEffect(() => {
-    if (!state?.result || !state?.inputParams) {
-      navigate('/setting_page');
-    }
-  }, [state, navigate]);
 
   const {
-    alice_bits = [],
-    bob_bits = [],
-    alice_bases = [],
-    bob_bases = [],
-    sifted_key = [],
-    quantum_bit_error_rate = 0,
-    matching_bases_count = 0,
-  } = result;
+  alice_bits = [],
+  bob_bits = [],
+  alice_bases = [],
+  bob_bases = [],
+  sifted_key = [],
+  quantum_bit_error_rate = 0,
+  matching_bases_count = 0,
+} = result;
 
-  const bitCount = alice_bits.length;
+const bitCount = alice_bits.length;
+
+useEffect(() => {
+  if (!state?.result || !state?.inputParams) {
+    navigate('/setting_page');
+    return;
+  }
+
+  // 2) Xây payload đúng với bitCount
+  const payload = {
+    alice_bits,
+    alice_bases,
+    bob_bases,
+    perturbProbability: parseFloat(inputParams.perturbProbability ?? 0)
+  };
+
+  // 3) Gửi JSON và đọc text SVG
+fetch('http://localhost:5000/bb84_circuit', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(payload)
+  
+})
+    .then(res => {
+      if (!res.ok) throw new Error(res.statusText);
+      return res.text();      // 4) Đọc response dưới dạng text (SVG)
+    })
+    .then(svgString => {
+      setCircuitSvg(svgString);
+    })
+    .catch(err => {
+      console.error('Error loading BB84 circuit SVG:', err);
+    });
+}, [state, inputParams, navigate, bitCount]);
+
+
+  // const {
+  //   alice_bits = [],
+  //   bob_bits = [],
+  //   alice_bases = [],
+  //   bob_bases = [],
+  //   sifted_key = [],
+  //   quantum_bit_error_rate = 0,
+  //   matching_bases_count = 0,
+  // } = result;
+
+  // const bitCount = alice_bits.length;
   const [isPaused, setIsPaused] = useState(false);
   const controls = useAnimation();
   const togglePause = () => setIsPaused(prev => !prev);
@@ -279,6 +321,18 @@ useEffect(() => {
             <div><strong>Matching bases:</strong> {matching_bases_count}</div>
             <div><strong>QBER:</strong> {(quantum_bit_error_rate * 100).toFixed(2)}%</div>
           </div>
+                    {/* Circuit SVG below Result summary */}
+{circuitSvg && (
+  <div className="w-full border border-amber-600 rounded-2xl p-6 bg-gray-800 bg-opacity-40 text-amber-200 mb-10 overflow-auto">
+    <h3 className="text-lg font-semibold mb-4">BB84 Circuit</h3>
+    <div
+      className="w-full max-w-full overflow-x-auto"
+      style={{ display: 'flex', justifyContent: 'center' }}
+      dangerouslySetInnerHTML={{ __html: circuitSvg }}
+    />
+  </div>
+)}
+
 
           {/* Parameters panel */}
           <div className="flex justify-center items-start gap-12 mb-10">

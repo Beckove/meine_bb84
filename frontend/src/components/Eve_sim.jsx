@@ -31,19 +31,11 @@ export default function SimulationPage() {
   const navigate = useNavigate();
   const { state } = useLocation();
 
+
+
   const [result] = useState(state?.result || {});
   const [inputParams] = useState(state?.inputParams || {});
-
-  useEffect(() => {
-    if (!state?.result || !state?.inputParams) {
-      navigate('/setting_page');
-    }
-  }, [state, navigate]);
-
-  const aliceControls = useAnimation();
-  const eveControls = useAnimation();
-
-  const {
+        const {
     alice_bits = [],
     bob_bits = [],
     eve_bits = [],
@@ -54,6 +46,48 @@ export default function SimulationPage() {
     quantum_bit_error_rate = 0,
     matching_bases_count = 0,
   } = result;
+  useEffect(() => {
+  if (!state?.result || !state?.inputParams) return;
+
+
+
+  const payload = {
+    alice_bits,
+    alice_bases,
+    bob_bases,
+    eve_bases,
+    perturbProbability: parseFloat(inputParams.perturbProbability ?? 0)
+  };
+
+  fetch('http://localhost:5000/bb84_circuit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+    .then(res => {
+      if (!res.ok) throw new Error(res.statusText);
+      return res.text(); // SVG string
+    })
+    .then(setCircuitSvg)
+    .catch(err => {
+      console.error('Error loading BB84 circuit SVG:', err);
+    });
+}, [state, inputParams, alice_bits, alice_bases, bob_bases, eve_bases]);
+
+  const [circuitSvg, setCircuitSvg] = useState(null);
+
+  useEffect(() => {
+    if (!state?.result || !state?.inputParams) {
+      navigate('/setting_page');
+    }
+  }, [state, navigate]);
+
+  
+
+  const aliceControls = useAnimation();
+  const eveControls = useAnimation();
+
+
 
   const bitCount = alice_bits.length;
   // Pause/Resume state
@@ -297,6 +331,30 @@ return (
             <div><strong>Matching bases:</strong> {matching_bases_count}</div>
             <div><strong>QBER:</strong> {(quantum_bit_error_rate * 100).toFixed(2)}%</div>
           </div>
+
+{circuitSvg && (
+  <div className="w-full max-h-[500px] overflow-auto border border-amber-600 rounded-2xl p-6 bg-gray-800 bg-opacity-40 text-amber-200 mb-10">
+    <h3 className="text-lg font-semibold mb-4">BB84 Circuit</h3>
+    <div className="w-full overflow-x-auto">
+      <div
+        className="w-full"
+        dangerouslySetInnerHTML={{
+          __html: circuitSvg.replace(
+            /<svg([^>]*)>/,
+            '<svg$1 style="width:100%;height:auto;max-height:400px;" preserveAspectRatio="xMidYMid meet">'
+          ),
+        }}
+      />
+    </div>
+  </div>
+)}
+
+
+
+
+
+
+
 
           {/* Parameters panel */}
           <div className="flex justify-center items-start gap-12 mb-10">

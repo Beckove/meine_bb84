@@ -30,7 +30,8 @@ function App() {
   const handleParamReset = () => setParams(idealParams);
 
   const handleStart = async ({ bitCount, isEveMode }) => {
-    const inputParams = { bitCount, isEveMode, ...params };
+    const inputParams = { bitCount, isEveMode, ...params, perturbProb: params.perturbProbability };
+    //delete inputParams.perturbProbability;
     setIsLoading(true);
     setError(null);
 
@@ -81,18 +82,11 @@ navigate(isEveMode ? '/with-eve' : '/no-eve', { state: { result, inputParams } }
 
         {!isLoading && (
           <div className="flex-1 flex justify-center items-center p-8">
-            <div className="flex flex-col items-center space-y-10 w-full max-w-5xl">
-              <div className="flex items-center space-x-8">
-                <img src={Alice} alt="Alice" className="w-32 h-32 animate-pulse" />
-                <ControlPanel onStart={handleStart} />
-                <img src={Bob} alt="Bob" className="w-32 h-32 animate-pulse" />
-              </div>
-              <ParameterPanel
-                params={params}
-                onChange={handleParamChange}
-                onReset={handleParamReset}
-              />
-            </div>
+          <div className="flex items-center space-x-16 scale-150">
+  <img src={Alice} alt="Alice" className="w-56 h-56 animate-pulse" />
+  <ControlPanel onStart={handleStart} />
+  <img src={Bob} alt="Bob" className="w-56 h-56 animate-pulse" />
+</div>
           </div>
         )}
 

@@ -28,9 +28,8 @@ export default function ParameterPanel({ params, onChange, onReset, className = 
         {renderInput('Detector Efficiency (%)', 'detectorEfficiency', '0.01')}
         {renderInput('Source efficiency (%)', 'sourceEfficiency')}
         {renderInput('Perturb Probability (%)', 'perturbProbability')}
-        {renderInput('Fiber Length (km)', 'fiberLength', '1')}
-        {renderInput('SOP Mean Deviation (rad)', 'sopMeanDeviation', '0.01')}
-        {renderInput('Fiber Loss (dB/km)', 'fiberLoss', '0.01')}
+        {renderInput('FSO Length (km)', 'fiberLength', '1')}
+        
       </div>
 
       <div className="flex justify-end mt-10">
