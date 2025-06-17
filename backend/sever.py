@@ -7,6 +7,7 @@ from qiskit import QuantumCircuit, transpile
 from qiskit_aer import Aer
 import bb84
 import bb84_fso as Simu
+from formular import *
 
 app = Flask(__name__)
 CORS(app)
@@ -135,133 +136,112 @@ def bb84_circuit():
         return jsonify({'error': str(e)}), 400
 
 
+
 @app.route('/bb84_simu', methods=['POST'])
 def bb84_simu():
     data = request.get_json()
-    try:
-        losses       = bool(data.get('losses', False))
-        perturb      = bool(data.get('perturbations', False))
-        eaves        = bool(data.get('eavesdropping', False))
-        sop_uncert   = bool(data.get('sopUncertainty', False))
-        sr  = float(data.get('sourceRate', 72.6e6))
-        se  = float(data.get('sourceEfficiency', 0.9))
-        fl  = float(data.get('fiberLength', 100))
-        loss= float(data.get('fiberLoss', 0.2))
-        de  = float(data.get('detectorEfficiency', 0.6))
-        pp  = float(data.get('perturbProb', 0.01))
-        sd  = float(data.get('sopDeviation', 0.05))
-        frac= float(data.get('qberFraction', 0.1))
-        n   = int(data.get('qubits', 1000))
 
-        params = {
-            'losses': losses,
-            'perturbations': perturb,
-            'eavesdropping': eaves,
-            'sopUncertainty': sop_uncert,
-            'sourceRate': sr,
-            'sourceEfficiency': se,
-            'fiberLength': fl,
-            'fiberLoss': loss,
-            'detectorEfficiency': de,
-            'perturbProb': pp,
-            'sopDeviation': sd,
-            'qberFraction': frac
-        }
+    # Lấy và xử lý dữ liệu đầu vào an toàn
+    params = {
+        'R':       float(data['R'])      if data.get('R')      not in [None, ''] else 1e9,
+        's':       float(data['s'])      if data.get('s')      not in [None, ''] else 0.5,
+        'p':       float(data['p'])      if data.get('p')      not in [None, ''] else 0.75,
+        'f':       float(data['f'])      if data.get('f')      not in [None, ''] else 1.0,
+        'd':       float(data['d'])      if data.get('d')      not in [None, ''] else 0.5,
+        'p_dark':  float(data['p_dark']) if data.get('p_dark') not in [None, ''] else 1e-4,
+        'P_AP':    float(data['P_AP'])   if data.get('P_AP')   not in [None, ''] else 0.02,
+        'e_0':     float(data['e_0'])    if data.get('e_0')    not in [None, ''] else 0.5,
+        'e_pol':   float(data['e_pol'])  if data.get('e_pol')  not in [None, ''] else 0.01,
+        'n_s':     float(data['n_s'])    if data.get('n_s')    not in [None, ''] else 0.3,
+        'n_d':     float(data['n_d'])    if data.get('n_d')    not in [None, ''] else 0.09,
+        'zenith':  float(data['zenith']) if data.get('zenith') not in [None, ''] else 0.0,
+        'tau': float(data['tau_zen']) if data.get('tau_zen') not in [None, ''] else 0.0,
 
-        alice_bits, bob_bits, *_res = Simu.bb84(n, losses, perturb, sop_uncert, eaves, params)
-        ce       = Simu.combined_efficiency_cal(se, fl, de, loss)
-        key_len  = Simu.key_length_cal(50, ce, frac)
-        key_rate = Simu.key_rate_cal(sr, ce, frac)
-        qber_val = _res[1] * 100
+    }
 
-        return jsonify({
-            'keyLength': key_len,
-            'keyRate': key_rate,
-            'qber': qber_val,
-            'combinedEfficiency': ce
-        })
+    # Tính QBER và SKR
+    qber_val = simulation_QBer(
+         params
+    )
 
-    except Exception as e:
-        app.logger.error(f"BB84 simu error: {e}")
-        return jsonify({'error': str(e)}), 400
+    skr_val = simulation_SKR(
+      params
+    )
+    print(f"skr{skr_val}")
+    print(f"qber{qber_val}")
+    # Trả về kết quả
+    return jsonify({
+        'qber': qber_val * 100,
+        'siftedkey': skr_val
+    })
 
 
 @app.route('/plot_simulation', methods=['POST'])
 def plot_simulation():
     try:
         data = request.get_json()
-        name_x = data['name_x']
-        name_y = data['name_y']
-        start = data['start_value_x']
-        end = data['end_value_x']
-        point = data['point']
+        name_x = data['name_x']              # e.g. "Zenith"
+        name_y = data['name_y']              # e.g. "QBER" or "Sifted Key"
+        start = float(data['start_value_x']) # start value of x param (zenith)
+        end = float(data['end_value_x'])     # end value of x param
+        point = int(data['point'])           # number of sampling points
 
+        # Step size for x-axis
         step = (end - start) / point
-        Qber, xs, kr, sk = [], [], [], []
-        params = {
-            "sourceRate": 72.6e6,
-            "sourceEfficiency": 0.7,
-            "detectorEfficiency": 0.6,
-            "perturbProb": 0.01,
-            "sopDeviation": 0.05,
-            "qberFraction": 0.2,
-            "muy": 0,
-            "sigma": 0.5,
-            "L": 1000
-        }
+
+        xs = []
+        qber_values = []
+        sifted_key_values = []
 
         for i in range(point + 1):
-            if name_x == 'C2n':
-                x = pow(10, -start) + ((pow(10, -end) - pow(10, -start)) / point) * i
-            else:
-                x = end if i == point else start + step * i
+            x_val = end if i == point else start + step * i
+            xs.append(x_val)
 
-            xs.append(x)
+            params = {
+                'R':       1e9,
+                's':       0.5,
+                'p':       0.75,
+                'f':       1.0,
+                'd':       0.5,
+                'p_dark':  1e-4,
+                'P_AP':    0.02,
+                'e_0':     0.5,
+                'e_pol':   0.01,
+                'n_s':     0.3,
+                'n_d':     0.09,
+                'zenith':  x_val,
+                'tau':     0.81
+            }
 
-            if name_x == 'Detection Efficiency':
-                params["detectorEfficiency"] = x / 100
-            elif name_x == 'Length':
-                params["L"] = x * 1000
-                params["qberFraction"] = 1
-            elif name_x == 'Source Efficiency':
-                params["sourceEfficiency"] = x / 100
-            elif name_x == 'Sop Mean Deviation':
-                params["sopDeviation"] = x
-            elif name_x == 'Perturb Probability':
-                params["perturbProb"] = x / 100
+            # Tính QBER và SKR tại giá trị hiện tại của tham số x
+            qber_val = simulation_QBer(
+                params
+            )
 
-            n_bits = 100000
-            alice_bits, bob_bits, alice_bases, bob_bases, sifted_key, qber, matching_bases_count = Simu.bb84(
-                n_bits, True, True, False, False, params)
-            key_rate = len(sifted_key) * (1 - qber) * (1 - 0.8)
-            kr.append(key_rate)
-            Qber.append(qber * 100)
-            sk.append(len(sifted_key) / 1000)
+            skr_val = simulation_SKR(
+ params
+            )
 
-        y = Qber
-        if name_y == "Sifted Key":
-            y = sk
-            name_y = "Sifted Key (KBit)"
-        elif name_y == "QBER":
-            y = Qber
-            name_y = "QBER (%)"
+            qber_values.append(qber_val * 100)       # % QBER
+            sifted_key_values.append(skr_val / 1000) # Kbps
 
-        if name_x == "Length":
-            name_x = "FSO Length (km)"
-        elif name_x == 'Sop Mean Deviation':
-            name_x = "Sop Mean Deviation (rad)"
-        elif name_x == 'Perturb Probability':
-            name_x = "Perturb Probability (%)"
+        # Chọn dữ liệu y phù hợp để hiển thị
+        if name_y == "QBER":
+            y = qber_values
+            y_label = "QBER (%)"
+        else:
+            y = sifted_key_values
+            y_label = "Sifted Key (Kbps)"
 
+        x_label = "Zenith (degree)" if name_x == "Zenith" else name_x
+
+        # Vẽ biểu đồ
         fig, ax = plt.subplots()
         ax.plot(xs, y, marker='o', linestyle='--', color='blue')
-        ax.set_xlabel(name_x)
-        ax.set_ylabel(name_y)
-        ax.set_title('BB84 Simulation')
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
+        ax.set_title("BB84 Simulation")
         ax.grid(True)
-        ax.legend()
-        ax.set_xlim(start, end)
-
         buf = io.BytesIO()
         plt.savefig(buf, format='png')
         buf.seek(0)
@@ -271,7 +251,6 @@ def plot_simulation():
     except Exception as e:
         app.logger.error(f"Plot simulation error: {e}")
         return jsonify({'error': str(e)}), 400
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
