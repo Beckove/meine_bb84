@@ -143,7 +143,7 @@ def bb84_simu():
 
     # Lấy và xử lý dữ liệu đầu vào an toàn
     params = {
-        'R':       float(data['R'])      if data.get('R')      not in [None, ''] else 1e9,
+        'R':       float(data['R'])*1e6       if data.get('R')      not in [None, ''] else 1e9,
         's':       float(data['s'])      if data.get('s')      not in [None, ''] else 0.5,
         'p':       float(data['p'])      if data.get('p')      not in [None, ''] else 0.75,
         'f':       float(data['f'])      if data.get('f')      not in [None, ''] else 1.0,
