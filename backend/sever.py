@@ -7,8 +7,7 @@ from qiskit import QuantumCircuit, transpile
 from qiskit_aer import Aer
 import bb84
 import bb84_fso as Simu
-from formular import *
-
+import formular
 app = Flask(__name__)
 CORS(app)
 
@@ -136,6 +135,7 @@ def bb84_circuit():
         return jsonify({'error': str(e)}), 400
 
 
+from flask import request, jsonify
 
 @app.route('/bb84_simu', methods=['POST'])
 def bb84_simu():
@@ -143,7 +143,7 @@ def bb84_simu():
 
     # Lấy và xử lý dữ liệu đầu vào an toàn
     params = {
-        'R':       float(data['R'])*1e6       if data.get('R')      not in [None, ''] else 1e9,
+        'R':       float(data['R']) *1e6     if data.get('R')      not in [None, ''] else 1e9,
         's':       float(data['s'])      if data.get('s')      not in [None, ''] else 0.5,
         'p':       float(data['p'])      if data.get('p')      not in [None, ''] else 0.75,
         'f':       float(data['f'])      if data.get('f')      not in [None, ''] else 1.0,
@@ -160,11 +160,11 @@ def bb84_simu():
     }
 
     # Tính QBER và SKR
-    qber_val = simulation_QBer(
+    qber_val = formular.simulation_QBer(
          params
     )
 
-    skr_val = simulation_SKR(
+    skr_val = formular.simulation_SKR(
       params
     )
     print(f"skr{skr_val}")
@@ -172,13 +172,29 @@ def bb84_simu():
     # Trả về kết quả
     return jsonify({
         'qber': qber_val * 100,
-        'siftedkey': skr_val
+        'siftedkey': skr_val/1e6
     })
 
 
 @app.route('/plot_simulation', methods=['POST'])
 def plot_simulation():
     try:
+        params = {
+            'R': 1e9,
+            's': 0.5,
+            'p': 0.75,
+            'f': 1.0,
+            'd': 0.5,
+            'p_dark': 1e-4,
+            'P_AP': 0.02,
+            'e_0': 0.5,
+            'e_pol': 0.01,
+            'n_s': 0.3,
+            'n_d': 0.09,
+            'zenith': 30,
+            'tau': 0.81
+        }
+
         data = request.get_json()
         name_x = data['name_x']              # e.g. "Zenith"
         name_y = data['name_y']              # e.g. "QBER" or "Sifted Key"
@@ -196,34 +212,27 @@ def plot_simulation():
         for i in range(point + 1):
             x_val = end if i == point else start + step * i
             xs.append(x_val)
+            if name_x == "Zenith":
+                x_label = "Zenith (degree)"
+                params["zenith"] = x_val
+            elif name_x == "Tau zen":
+                x_label = "Transmission Efficiency"
+                params["tau"] = x_val
+            else:
+                x_label = name_x  # fallback nếu không khớp
 
-            params = {
-                'R':       1e9,
-                's':       0.5,
-                'p':       0.75,
-                'f':       1.0,
-                'd':       0.5,
-                'p_dark':  1e-4,
-                'P_AP':    0.02,
-                'e_0':     0.5,
-                'e_pol':   0.01,
-                'n_s':     0.3,
-                'n_d':     0.09,
-                'zenith':  x_val,
-                'tau':     0.81
-            }
-
+            print(params["tau"])
             # Tính QBER và SKR tại giá trị hiện tại của tham số x
-            qber_val = simulation_QBer(
+            qber_val = formular.simulation_QBer(
                 params
             )
 
-            skr_val = simulation_SKR(
+            skr_val = formular.simulation_SKR(
  params
             )
 
             qber_values.append(qber_val * 100)       # % QBER
-            sifted_key_values.append(skr_val / 1000) # Kbps
+            sifted_key_values.append(skr_val / 1e6) # Kbps
 
         # Chọn dữ liệu y phù hợp để hiển thị
         if name_y == "QBER":
@@ -231,17 +240,29 @@ def plot_simulation():
             y_label = "QBER (%)"
         else:
             y = sifted_key_values
-            y_label = "Sifted Key (Kbps)"
-
-        x_label = "Zenith (degree)" if name_x == "Zenith" else name_x
+            y_label = "Key Generation Rate (Mbps)"
 
         # Vẽ biểu đồ
         fig, ax = plt.subplots()
-        ax.plot(xs, y, marker='o', linestyle='--', color='blue')
-        ax.set_xlabel(x_label)
-        ax.set_ylabel(y_label)
+
+        # Vẽ đường và các điểm
+        ax.plot(xs, y, marker='o', markersize=5, linestyle='--', color='blue')
+
+
+        # Gán nhãn trục
+        ax.set_xlabel(x_label, fontsize=15)
+        ax.set_ylabel(y_label, fontsize=15)  # VD: "Secret Key Rate (Mbps)"
         ax.set_title("BB84 Simulation")
         ax.grid(True)
+
+        # Cài đặt giới hạn trục
+        ax.set_xlim(left=min(xs), right=max(xs))
+        if y_label == "Key Generation Rate (Mbps)":
+            ax.set_ylim(0, 0.7)  
+
+        # Căn chỉnh bố cục
+        plt.tight_layout()
+
         buf = io.BytesIO()
         plt.savefig(buf, format='png')
         buf.seek(0)
@@ -251,6 +272,8 @@ def plot_simulation():
     except Exception as e:
         app.logger.error(f"Plot simulation error: {e}")
         return jsonify({'error': str(e)}), 400
+
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)

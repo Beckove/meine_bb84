@@ -124,17 +124,17 @@ export default function SimuPage() {
             onClick={() => setMode('single')}
             className={`px-4 py-2 rounded-lg font-medium ${mode === 'single' ? 'bg-indigo-500 text-black' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
           >
-            Single Simulation
+            Single Value
           </button>
           <button
             onClick={() => setMode('multiple')}
             className={`px-4 py-2 rounded-lg font-medium ${mode === 'multiple' ? 'bg-indigo-500 text-black' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
           >
-            Multiple Simulations
+            Multiple Values
           </button>
         </div>
 
-        <h1 className="text-3xl font-bold mb-10 text-center">QKD Simulation Settings</h1>
+        <h1 className="text-3xl font-bold mb-10 text-center">QKD Computation Tool	</h1>
 
         {mode === 'single' ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -163,7 +163,7 @@ export default function SimuPage() {
             <div className="flex flex-col justify-between gap-4">
               <div>
                 <h2 className="text-xl font-semibold mb-4">Results</h2>
-                {[{ label: 'QBER (%)', name: 'qber' }, { label: 'Sifted Key Rate (Hz)', name: 'siftedkey' }].map(({ label, name }, idx) => (
+                {[{ label: 'QBER (%)', name: 'qber' }, { label: 'Key generation rate (Mbps)', name: 'siftedkey' }].map(({ label, name }, idx) => (
                   <div key={idx} className="mb-4">
                     <label className="block mb-1 text-sm font-medium">{label}</label>
                     <input
@@ -181,7 +181,7 @@ export default function SimuPage() {
                   onClick={handleRunSimulation}
                   className="bg-indigo-500 text-black px-4 py-2 rounded hover:bg-indigo-600"
                 >
-                  Run simulation
+                  Run
                 </button>
                 {/* <button
                   onClick={handleAbort}

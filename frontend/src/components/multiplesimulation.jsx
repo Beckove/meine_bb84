@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 
 const xParams = [
-  { value: 'Zenith', label: 'Zenith (degree)' }
+  { value: 'Zenith', label: 'Zenith (degree)' },
+  { value: 'Tau zen', label: 'Tau zen (τ) ' }
 ];
 
 const yParams = [
   { value: 'QBER', label: 'QBER' },
-  { value: 'Sifted Key ', label: 'Sifted Key Rate' }
+  { value: 'Secret Key Rate ', label: 'Key Generation Rate (Mbps)' }
 ];
 
 const MultipleSimulationsUI = () => {
@@ -63,7 +64,7 @@ const MultipleSimulationsUI = () => {
       <div className="max-w-6xl mx-auto flex space-x-8 border border-gray-300 rounded-lg p-6 shadow-lg bg-white">
         {/* Parameters */}
         <div className="w-1/2 space-y-6 border border-gray-300 rounded-lg p-6 bg-gray-50 shadow-inner">
-          <h2 className="text-2xl font-semibold mb-4 text-center">Simulation Parameters</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-center">Computation Parameters</h2>
 
           <div>
             <label className="block text-sm mb-2 font-medium">X-axis parameter</label>

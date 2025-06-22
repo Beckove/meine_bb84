@@ -22,7 +22,7 @@ def EQ_muy(eta, p_dark, P_AP, e_0, e_pol, n_s):
     return e_0 * p_dark_new + (e_pol + e_0 * P_AP) * (1 - np.exp(-n_s * eta))
 
 # Tính QBER trung bình và Qμ trung bình
-def qber_cal(p_dark, P_AP, e_0, e_pol, n_s, zenith):
+def qber_cal(p_dark, P_AP, e_0, e_pol, n_s, channel,zenith):
     phi_mod, A_mod, eta_l, mu, sigma_R = channel.prepare_parameters(zenith=zenith)
 
     def numerator(eta):
@@ -37,7 +37,7 @@ def qber_cal(p_dark, P_AP, e_0, e_pol, n_s, zenith):
     return numerator_inter / denominator_inter, denominator_inter
 
 # Hàm tính SKR hoàn chỉnh
-def compute_SKR(R, s, p, d, f, p_dark, e_0, e_pol, n_s, n_d, P_AP, zenith):
+def compute_SKR(R, s, p, d, f, p_dark, e_0, e_pol, n_s, n_d, P_AP, channel,zenith):
     phi_mod, A_mod, eta_l, mu, sigma_R = channel.prepare_parameters(zenith=zenith)
 
     # Hàm tính Q1 lower bound
@@ -76,14 +76,14 @@ def compute_SKR(R, s, p, d, f, p_dark, e_0, e_pol, n_s, n_d, P_AP, zenith):
     avg_e1_U = integral_e1 / avg_Q_1_L
 
     # Tính Qμ và Eμ trung bình
-    E_mu, Q_mu = qber_cal(p_dark, P_AP, e_0, e_pol, n_s, zenith)
+    E_mu, Q_mu = qber_cal(p_dark, P_AP, e_0, e_pol, n_s, channel,zenith)
 
     # Tính toàn bộ SKR
     element_1 = R * s * p * d
     element_2 = -Q_mu * f * H_2(E_mu)
     element_3 = avg_Q_1_L * (1 - H_2(avg_e1_U))
-    # if (element_2 + element_3) < 0:
-    #     return 0
+    if (element_2 + element_3) < 0:
+        return 0
     return element_1 * (element_2 + element_3)
 
 
@@ -94,7 +94,7 @@ def simulation_QBer(params):
         params["P_AP"],
         params["e_0"],
         params["e_pol"],
-        params["n_s"],
+        params["n_s"],channel,
         params["zenith"]
     )
     return qber
@@ -112,8 +112,7 @@ def simulation_SKR(params):
         params["e_pol"],
         params["n_s"],
         params["n_d"],
-        params["P_AP"],
+        params["P_AP"],channel,
         params["zenith"]
     )
     return skr
-
